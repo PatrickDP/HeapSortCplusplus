@@ -16,17 +16,8 @@ public:
     
     Client clients[TOTAL_MAX + 1];
     
-    unsigned memoryAcess_heapSort = 0;
-    unsigned memoryAcess_heapfy = 0;
-
-    unsigned arr_heapSort[TOTAL_MAX + 1] = {};
-    unsigned arr_heapfy[TOTAL_MAX + 1] = {};
-
-    unsigned total_memoryAcess_heapSort = 0;
-    unsigned total_memoryAcess_heapfy = 0;
-
-    unsigned arr_totalMemoryAcess[TOTAL_MAX + 1] = {};
-
+    unsigned memoryAcess_counter = 0;
+    unsigned arr_memoryAcess[TOTAL_MAX + 1] = {};
     unsigned total_memoryAcess = 0;
     unsigned acumulator_memoryAcess = 0;
     unsigned arr_acumulatorMemoryAcess[TOTAL_MAX + 1] = {};
@@ -51,7 +42,6 @@ public:
     bool isRandomKey(unsigned randomKey);
     
     void eachStep();
-    void storeValueArrayheapSort(unsigned num_memoryAcess, unsigned arr[]);
-    void storeValueArrayheapfy(unsigned num_memoryAcess, unsigned arr[]);
+    void storeValueArrayMemory(unsigned num_memoryAcess);
     void printMemoryAcessList();
 };

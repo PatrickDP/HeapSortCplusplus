@@ -63,5 +63,7 @@ int main() {
     cout << "Heap sorted list:\t";
     l1.printList(l1.dataStructure_size);
 
+    l1.printMemoryAcessList();
+
     return 0;
 }

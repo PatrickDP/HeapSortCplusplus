@@ -76,37 +76,41 @@ void StaticList::createHeap() {
 }
 // ENCONTRA O PAI, FILHO ESQ. E DIR.
 unsigned StaticList::parent(unsigned i) { return (i / 2); }
-unsigned StaticList::leftSon(unsigned i) { return (2 * i); }
-unsigned StaticList::rightSon(unsigned i) { return (2 * i) + 1; }
+unsigned StaticList::leftSon(unsigned i) { memoryAcess_counter += 1; return (2 * i);  }
+unsigned StaticList::rightSon(unsigned i) { memoryAcess_counter += 1; return (2 * i) + 1; }
 // RESTAURA A PROPRIEDADE DE HEAP
 void StaticList::heapfy(unsigned i) {
+    memoryAcess_counter += 1;
+
+    memoryAcess_counter += 1;
     unsigned left = leftSon(i);
+
+    memoryAcess_counter += 1;
     unsigned right = rightSon(i);
+    
     unsigned majorElement = 0;
 
     eachStep();
-
-    memoryAcess_heapfy += 1;
-    storeValueArrayheapfy(memoryAcess_heapfy, arr_heapfy);
     
     if((left <= dataStructure_size) && (clients[left].key > clients[i].key)) {
+        memoryAcess_counter += 4;
         majorElement = left;
-        memoryAcess_heapfy += 2;
-    } else { 
+    } else {
         majorElement = i; 
-        memoryAcess_heapfy += 2;
         }
     if((right <= dataStructure_size) && (clients[right].key > clients[majorElement].key)) {
+        memoryAcess_counter += 4;
         majorElement = right;
-        memoryAcess_heapfy += 2;
     }
     if (majorElement != i) {
+        memoryAcess_counter += 4;
         swap(clients[i], clients[majorElement]);
-        memoryAcess_heapfy += 3;
         heapfy(majorElement);
     }
 }
 void StaticList::heapSort() {
+    memoryAcess_counter += 1;
+
     dataStructure_size_aux = dataStructure_size; 
     
     // DESLOCA OS ELEMENTOS DA ESQUERDA PARA A DIREITA PARA TRANSFORMAR A LISTA EM UM HEAP
@@ -114,23 +118,23 @@ void StaticList::heapSort() {
     
     // MOSTRA OS PASSOS PARA TRANSFORMAR A LISTA EM HEAP
     cout << "Each Step (createHeap - heapfy):" << endl; 
+
+    memoryAcess_counter += 1;
     createHeap();
-    cout << endl << "Heap:\t\t\t\t\t\t\t"; printList(dataStructure_size+1);
     
-    memoryAcess_heapSort += 1;
+    // IMPRIMI UM HEAP
+    cout << endl << "Heap:\t\t\t\t\t\t\t"; printList(dataStructure_size+1);
 
     // MOSTRA O HEAP SENDO ORDENADO
     cout << endl << "EachStep (heapSort - heapFy):" << endl;
     for(unsigned i = dataStructure_size_aux; i != 0; i--) {
         dataStructure_size--;
         
-        memoryAcess_heapSort += 3;
+        memoryAcess_counter += 4;
         swap(clients[1], clients[i]);
+        heapfy(1);   
         
-        memoryAcess_heapSort += 1;
-        heapfy(1);
-        
-        storeValueArrayheapSort(memoryAcess_heapSort, arr_heapSort);
+        storeValueArrayMemory(memoryAcess_counter);
     }
     dataStructure_size = dataStructure_size_aux;
 
@@ -168,52 +172,25 @@ void StaticList::eachStep() {
     cout << "" << counter << ".\t\t\t\t\t\t\t\t"; printList(dataStructure_size_aux+1);
     counter++;
 }
-void StaticList::storeValueArrayheapSort(unsigned num_memoryAcess, unsigned arr[]) {
+void StaticList::storeValueArrayMemory(unsigned num_memoryAcess) {
     static unsigned index = 0;
     
     if(index < dataStructure_size_aux) {
-        arr[index] += num_memoryAcess;
-        index++;
-    } else { index = 0; }
-}
-void StaticList::storeValueArrayheapfy(unsigned num_memoryAcess, unsigned arr[]) {
-    static unsigned index = 0;
-    
-    if(index < dataStructure_size_aux) {
-        arr[index] += num_memoryAcess;
+        arr_memoryAcess[index] += num_memoryAcess;
         index++;
     } else { index = 0; }
 }
 void StaticList::printMemoryAcessList() {
-    cout << endl <<"- Array of memory acesses in heapSort function:" << endl;
+    cout << endl <<"- Array of memory acesses:" << endl;
     for(unsigned i = 0; i < dataStructure_size; i++) {
-        total_memoryAcess_heapSort += arr_heapSort[i];
-        cout << arr_heapSort[i] << " ";
+        total_memoryAcess += arr_memoryAcess[i];
+        cout << arr_memoryAcess[i] << " ";
     }
-    cout << endl << endl;
-    cout <<"- Array of memory acesses in heapfy function:" << endl;
-    for(unsigned i = 0; i < dataStructure_size; i++) {
-        total_memoryAcess_heapfy += arr_heapfy[i];
-        cout << arr_heapfy[i] << " ";
-    }
-    cout << endl << endl;
-     cout << "- Memory acesses on the list during heapSort function:" << endl << total_memoryAcess_heapSort << endl;
-    cout << endl << "- Memory acesses on the list during heapfy function:"<< endl << total_memoryAcess_heapfy << endl;
-    
-    cout << endl << "> Array of total memory acesses:" << endl;
-    for(unsigned i = 0; i < dataStructure_size; i++) {
-        arr_totalMemoryAcess[i] = arr_heapSort[i] + arr_heapfy[i];
-        cout << arr_totalMemoryAcess[i] << " ";
-    }
-    cout << endl << endl;
-    
-    total_memoryAcess = total_memoryAcess_heapSort + total_memoryAcess_heapfy;
-    
-    cout << "> Total of memoryAcess in heapSort algorithm:" << endl << total_memoryAcess << endl;
+    cout << endl << endl << "> Total of memoryAcess in heapSort algorithm:" << endl << total_memoryAcess << endl;
     
     cout << endl << "- Acumulator Array of memory acesses value:" << endl;
     for(unsigned i = 0; i < dataStructure_size; i++) {
-        arr_acumulatorMemoryAcess[i] = acumulator_memoryAcess + arr_totalMemoryAcess[i];
+        arr_acumulatorMemoryAcess[i] = acumulator_memoryAcess + arr_memoryAcess[i];
         acumulator_memoryAcess = arr_acumulatorMemoryAcess[i];
         cout << arr_acumulatorMemoryAcess[i] << " ";
     }
